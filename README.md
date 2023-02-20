@@ -8,12 +8,14 @@ You need to connect to 2 databases locally, please add some.env files to your lo
 
 .env.development
 
-This connects to your development database
+This connects to your development database.
+
 Write this into the file: PGDATABASE=data_base_name
 
 2. test File
 
 .env.test
 
-This connects to your test database
+This connects to your test database.
+
 Write this into the file: PGDATABASE=data_base_name_test
