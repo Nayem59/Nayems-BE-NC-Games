@@ -8,6 +8,17 @@ const { expect } = require("@jest/globals");
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
+describe("404 /notExistingPath", () => {
+  it("404: should respond with 404 path not found", () => {
+    return request(app)
+      .get("/wrongEndpoint")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path not found");
+      });
+  });
+});
+//
 describe("GET /api/categories", () => {
   it("200: should respond with category objects array, which should have slug and description properties", () => {
     return request(app)
@@ -24,10 +35,6 @@ describe("GET /api/categories", () => {
           expect(category).toHaveProperty("description", expect.any(String));
         });
       });
-  });
-  //
-  it("404: should respond with 404 not found", () => {
-    return request(app).get("/api/wrongEndpoint").expect(404);
   });
 });
 //
@@ -58,9 +65,46 @@ describe("GET /api/reviews", () => {
         });
       });
   });
+});
+//
+describe("GET /api/reviews/:review_id", () => {
+  it("200: should respond with review object, which should have 9 properties", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(typeof review).toBe("object");
+        expect(review).toHaveProperty("review_id", expect.any(Number));
+        expect(review.review_id).toBe(1);
+        expect(review).toHaveProperty("title", expect.any(String));
+        expect(review.title).toBe("Agricola");
+        expect(review).toHaveProperty("review_body", expect.any(String));
+        expect(review).toHaveProperty("designer", expect.any(String));
+        expect(review).toHaveProperty("review_img_url", expect.any(String));
+        expect(review).toHaveProperty("votes", expect.any(Number));
+        expect(review).toHaveProperty("category", expect.any(String));
+        expect(review).toHaveProperty("owner", expect.any(String));
+        expect(review).toHaveProperty("created_at", expect.any(String));
+      });
+  });
   //
-  it("404: should respond with 404 not found", () => {
-    return request(app).get("/api/differentEndpoint").expect(404);
+  it("400: should respond with 400 bad request", () => {
+    return request(app)
+      .get("/api/reviews/banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("404: should respond with 404 not existent review_id", () => {
+    return request(app)
+      .get("/api/reviews/100")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("valid but not existent review_id");
+      });
   });
 });
 //
