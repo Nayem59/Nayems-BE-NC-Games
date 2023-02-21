@@ -15,13 +15,8 @@ exports.fetchReviews = () => {
 };
 
 exports.fetchReviewById = (review_id) => {
-  let queryStr = "SELECT * FROM reviews";
-  const queryParams = [];
-
-  if (review_id !== undefined) {
-    queryStr += " WHERE review_id = $1";
-    queryParams.push(review_id);
-  }
+  let queryStr = "SELECT * FROM reviews WHERE review_id = $1";
+  const queryParams = [review_id];
 
   return db.query(queryStr, queryParams).then((result) => {
     if (result.rowCount === 0) {
@@ -33,13 +28,9 @@ exports.fetchReviewById = (review_id) => {
 };
 
 exports.fetchReviewComments = (review_id) => {
-  let queryStr = "SELECT * FROM comments";
-  const queryParams = [];
-
-  if (review_id !== undefined) {
-    queryStr += " WHERE review_id = $1 ORDER BY created_at DESC";
-    queryParams.push(review_id);
-  }
+  let queryStr =
+    "SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC";
+  const queryParams = [review_id];
 
   return db.query(queryStr, queryParams).then((result) => {
     return result.rows;
