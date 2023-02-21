@@ -108,3 +108,54 @@ describe("GET /api/reviews/:review_id", () => {
   });
 });
 //
+describe("GET /api/reviews/:review_id/commnets", () => {
+  it("200: should respond comments array for the given review_id, which should have 6 properties each", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("comments");
+        const { comments } = body;
+        expect(body.comments).toBeInstanceOf(Array);
+        expect(comments.length).toBe(3);
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("body", expect.any(String));
+          expect(comment).toHaveProperty("review_id", expect.any(Number));
+        });
+        expect(comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  //
+  it("200: should respond with empty array if review has no comments", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(0);
+      });
+  });
+  //
+  it("400: should respond with 400 bad request if review id is not a number", () => {
+    return request(app)
+      .get("/api/reviews/banana/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("404: should respond with 404 not existent review_id", () => {
+    return request(app)
+      .get("/api/reviews/100/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("valid but not existent review_id");
+      });
+  });
+});
