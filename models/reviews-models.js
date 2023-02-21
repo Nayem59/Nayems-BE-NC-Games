@@ -23,7 +23,6 @@ exports.fetchReviewById = (review_id) => {
   }
 
   return db.query(queryStr, queryParams).then((result) => {
-    console.log(result.rowCount);
     if (result.rowCount === 0) {
       return Promise.reject("valid but not existent review_id");
     } else {
