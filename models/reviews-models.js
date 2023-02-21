@@ -47,11 +47,21 @@ exports.fetchReviewComments = (review_id) => {
 };
 
 exports.writeReviewComments = (review_id, newComment) => {
-  let queryStr = ``;
-  const queryParams = [];
+  const queryParams = [
+    newComment.body,
+    newComment.username,
+    review_id,
+    10,
+    new Date(1610964577200),
+  ];
+  let queryStr = `INSERT INTO comments
+  (body, author, review_id, votes, created_at)
+  VALUES
+  ($1,$2,$3,$4,$5)
+  RETURNING *;`;
 
-  if (review_id !== undefined) {
-    queryStr += "";
-    queryParams.push(review_id);
-  }
+  return db.query(queryStr, queryParams).then((result) => {
+    console.log(result.rows[0]);
+    return result.rows[0];
+  });
 };
