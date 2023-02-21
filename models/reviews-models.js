@@ -13,3 +13,16 @@ exports.fetchReviews = () => {
     return result.rows;
   });
 };
+
+exports.fetchReviewById = (review_id) => {
+  let queryStr = "SELECT * FROM reviews";
+  const queryParams = [];
+  if (review_id !== undefined) {
+    queryStr += " WHERE review_id = $1";
+    queryParams.push(review_id);
+  }
+
+  return db.query(queryStr, queryParams).then((result) => {
+    return result.rows[0];
+  });
+};
