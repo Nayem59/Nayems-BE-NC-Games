@@ -159,3 +159,26 @@ describe("GET /api/reviews/:review_id/commnets", () => {
       });
   });
 });
+//
+// describe("POST /api/reviews/:review_id/commnets", () => {
+//   it("201: should accept object with username and body and respond with posted comment", () => {
+//     const review_id = 1;
+//     const newComment = {
+//       username: "Nayem",
+//       body: "what an awesome comment",
+//     };
+//     return request(app)
+//       .post(`/api/reviews/${review_id}/comments`)
+//       .send(newComment)
+//       .expect(201)
+//       .then(({ body }) => {
+//         const { comment } = body;
+//         expect(comment).toHaveProperty("comment_id", expect.any(Number));
+//         expect(comment).toHaveProperty("votes", expect.any(Number));
+//         expect(comment).toHaveProperty("created_at", expect.any(String));
+//         expect(comment).toHaveProperty("author", "Nayem");
+//         expect(comment).toHaveProperty("body", "what an awesome comment");
+//         expect(comment).toHaveProperty("review_id", review_id);
+//       });
+//   });
+// });

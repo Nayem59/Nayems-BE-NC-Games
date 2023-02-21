@@ -45,3 +45,13 @@ exports.fetchReviewComments = (review_id) => {
     return result.rows;
   });
 };
+
+exports.writeReviewComments = (review_id, newComment) => {
+  let queryStr = ``;
+  const queryParams = [];
+
+  if (review_id !== undefined) {
+    queryStr += "";
+    queryParams.push(review_id);
+  }
+};
