@@ -37,22 +37,15 @@ exports.fetchReviewComments = (review_id) => {
   });
 };
 
-exports.writeReviewComments = (review_id, newComment) => {
-  const queryParams = [
-    newComment.body,
-    newComment.username,
-    review_id,
-    10,
-    new Date(1610964577200),
-  ];
+exports.addReviewComments = (review_id, newComment) => {
+  const queryParams = [newComment.body, newComment.username, review_id];
   let queryStr = `INSERT INTO comments
-  (body, author, review_id, votes, created_at)
+  (body, author, review_id)
   VALUES
-  ($1,$2,$3,$4,$5)
+  ($1,$2,$3)
   RETURNING *;`;
 
   return db.query(queryStr, queryParams).then((result) => {
-    console.log(result.rows[0]);
     return result.rows[0];
   });
 };

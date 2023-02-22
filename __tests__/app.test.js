@@ -160,25 +160,84 @@ describe("GET /api/reviews/:review_id/commnets", () => {
   });
 });
 //
-// describe("POST /api/reviews/:review_id/commnets", () => {
-//   it("201: should accept object with username and body and respond with posted comment", () => {
-//     const review_id = 1;
-//     const newComment = {
-//       username: "Nayem",
-//       body: "what an awesome comment",
-//     };
-//     return request(app)
-//       .post(`/api/reviews/${review_id}/comments`)
-//       .send(newComment)
-//       .expect(201)
-//       .then(({ body }) => {
-//         const { comment } = body;
-//         expect(comment).toHaveProperty("comment_id", expect.any(Number));
-//         expect(comment).toHaveProperty("votes", expect.any(Number));
-//         expect(comment).toHaveProperty("created_at", expect.any(String));
-//         expect(comment).toHaveProperty("author", "Nayem");
-//         expect(comment).toHaveProperty("body", "what an awesome comment");
-//         expect(comment).toHaveProperty("review_id", review_id);
-//       });
-//   });
-// });
+describe("POST /api/reviews/:review_id/commnets", () => {
+  it("201: should accept object with username and body and respond with posted comment", () => {
+    const review_id = 1;
+    const newComment = {
+      username: "mallionaire",
+      body: "what an awesome comment",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toHaveProperty("comment_id", 7);
+        expect(comment).toHaveProperty("votes", expect.any(Number));
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+        expect(comment).toHaveProperty("author", "mallionaire");
+        expect(comment).toHaveProperty("body", "what an awesome comment");
+        expect(comment).toHaveProperty("review_id", review_id);
+      });
+  });
+  //
+  it("400: should respond with 400 bad request if review id is not a number", () => {
+    const review_id = "banana";
+    const newComment = {
+      username: "mallionaire",
+      body: "what an awesome comment",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("400: should respond with 400 if new comment has not got right keys", () => {
+    const review_id = "1";
+    const newComment = {
+      username: "mallionaire",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing request keys");
+      });
+  });
+  //
+  it("404: should respond with 404 not existent review_id", () => {
+    const review_id = "100";
+    const newComment = {
+      username: "mallionaire",
+      body: "what an awesome comment",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("valid but not existent review_id");
+      });
+  });
+  //
+  it("404: should respond with 404 if user does not exist", () => {
+    const review_id = "1";
+    const newComment = {
+      username: "wrongUser",
+      body: "what an awesome comment",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("user does not exist");
+      });
+  });
+});

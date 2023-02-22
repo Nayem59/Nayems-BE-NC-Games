@@ -2,8 +2,9 @@ const {
   fetchReviews,
   fetchReviewById,
   fetchReviewComments,
-  writeReviewComments,
+  addReviewComments,
 } = require("../models/reviews-models");
+const { fetchUserById } = require("../models/users-models");
 
 exports.getReviews = (req, res, next) => {
   fetchReviews()
@@ -44,5 +45,17 @@ exports.postReviewComments = (req, res, next) => {
   const { review_id } = req.params;
   const newComment = req.body;
 
-  writeReviewComments(review_id, newComment);
+  fetchReviewById(review_id)
+    .then(() => {
+      return fetchUserById(newComment.username);
+    })
+    .then(() => {
+      return addReviewComments(review_id, newComment);
+    })
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
