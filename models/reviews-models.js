@@ -49,3 +49,16 @@ exports.addReviewComments = (review_id, newComment) => {
     return result.rows[0];
   });
 };
+
+exports.updateReview = (review_id, newComment) => {
+  const queryParams = [newComment.inc_votes, review_id];
+  let queryStr = `UPDATE reviews
+  SET 
+  votes = votes + $1
+  WHERE review_id = $2
+  RETURNING *;`;
+
+  return db.query(queryStr, queryParams).then((result) => {
+    return result.rows[0];
+  });
+};

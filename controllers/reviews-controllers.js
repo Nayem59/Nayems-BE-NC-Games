@@ -3,6 +3,7 @@ const {
   fetchReviewById,
   fetchReviewComments,
   addReviewComments,
+  updateReview,
 } = require("../models/reviews-models");
 const { fetchUserById } = require("../models/users-models");
 
@@ -54,6 +55,22 @@ exports.postReviewComments = (req, res, next) => {
     })
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchReview = (req, res, next) => {
+  const { review_id } = req.params;
+  const newComment = req.body;
+
+  fetchReviewById(review_id)
+    .then(() => {
+      return updateReview(review_id, newComment);
+    })
+    .then((review) => {
+      res.status(201).send({ review });
     })
     .catch((err) => {
       next(err);

@@ -207,7 +207,7 @@ describe("POST /api/reviews/:review_id/commnets", () => {
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("missing request keys");
+        expect(body.msg).toBe("missing or wrong request keys");
       });
   });
   //
@@ -238,6 +238,87 @@ describe("POST /api/reviews/:review_id/commnets", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("user does not exist");
+      });
+  });
+});
+//
+describe("PATCH /api/reviews/:review_id", () => {
+  it("201: should accept object with inc_votes and update with new vote in review", () => {
+    const review_id = 1;
+    const newComment = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch(`/api/reviews/${review_id}`)
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toHaveProperty("review_id", review_id);
+        expect(review).toHaveProperty("title", "Agricola");
+        expect(review).toHaveProperty("designer", "Uwe Rosenberg");
+        expect(review).toHaveProperty("owner", "mallionaire");
+        expect(review).toHaveProperty("review_img_url", expect.any(String));
+        expect(review).toHaveProperty("review_body", "Farmyard fun!");
+        expect(review).toHaveProperty("category", "euro game");
+        expect(review).toHaveProperty("created_at", expect.any(String));
+        expect(review).toHaveProperty("votes", 2);
+      });
+  });
+  //
+  it("400: should respond with 400 bad request if review id is not a number", () => {
+    const review_id = "banana";
+    const newComment = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch(`/api/reviews/${review_id}`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("400: should respond with 400 if new comment has not got right keys", () => {
+    const review_id = "1";
+    const newComment = {
+      wrongKey: 1,
+    };
+    return request(app)
+      .patch(`/api/reviews/${review_id}`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing or wrong request keys");
+      });
+  });
+  //
+  // it("400: should respond with 400 if new comment has not got right key value type", () => {
+  //   const review_id = "1";
+  //   const newComment = {
+  //     inc_votes: "banana",
+  //   };
+  //   return request(app)
+  //     .patch(`/api/reviews/${review_id}`)
+  //     .send(newComment)
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe("wrong value type");
+  //     });
+  // });
+  //
+  it("404: should respond with 404 not existent review_id", () => {
+    const review_id = "100";
+    const newComment = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch(`/api/reviews/${review_id}`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("valid but not existent review_id");
       });
   });
 });
