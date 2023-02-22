@@ -5,7 +5,6 @@ const {
   addReviewComments,
   updateReview,
 } = require("../models/reviews-models");
-const { fetchUserById } = require("../models/users-models");
 
 exports.getReviews = (req, res, next) => {
   fetchReviews()
