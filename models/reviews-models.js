@@ -36,3 +36,16 @@ exports.fetchReviewComments = (review_id) => {
     return result.rows;
   });
 };
+
+exports.addReviewComments = (review_id, newComment) => {
+  const queryParams = [newComment.body, newComment.username, review_id];
+  let queryStr = `INSERT INTO comments
+  (body, author, review_id)
+  VALUES
+  ($1,$2,$3)
+  RETURNING *;`;
+
+  return db.query(queryStr, queryParams).then((result) => {
+    return result.rows[0];
+  });
+};
