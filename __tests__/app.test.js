@@ -294,19 +294,19 @@ describe("PATCH /api/reviews/:review_id", () => {
       });
   });
   //
-  // it("400: should respond with 400 if new comment has not got right key value type", () => {
-  //   const review_id = "1";
-  //   const newComment = {
-  //     inc_votes: "banana",
-  //   };
-  //   return request(app)
-  //     .patch(`/api/reviews/${review_id}`)
-  //     .send(newComment)
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("wrong value type");
-  //     });
-  // });
+  it("400: should respond with 400 bad request if new comment has not got right key value type", () => {
+    const review_id = "1";
+    const newComment = {
+      inc_votes: "banana",
+    };
+    return request(app)
+      .patch(`/api/reviews/${review_id}`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
   //
   it("404: should respond with 404 not existent review_id", () => {
     const review_id = "100";
