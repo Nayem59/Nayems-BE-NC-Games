@@ -46,13 +46,7 @@ exports.postReviewComments = (req, res, next) => {
   const { review_id } = req.params;
   const newComment = req.body;
 
-  fetchReviewById(review_id)
-    .then(() => {
-      return fetchUserById(newComment.username);
-    })
-    .then(() => {
-      return addReviewComments(review_id, newComment);
-    })
+  addReviewComments(review_id, newComment)
     .then((comment) => {
       res.status(201).send({ comment });
     })
