@@ -342,3 +342,45 @@ describe("GET /api/users", () => {
       });
   });
 });
+//
+describe("GET /api/reviews(queries)", () => {
+  it("200: should respond with the reviews by the category value specified in the query", () => {
+    const category = "euro game";
+    return request(app)
+      .get(`/api/reviews?category=${category}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        const { reviews } = body;
+        reviews.forEach((review) => {
+          expect(review).toHaveProperty("category", category);
+        });
+      });
+  });
+  //
+  it("200: should respond with the reviews sorted by the value specified in the query default to date", () => {
+    const sort_by = "votes";
+    return request(app)
+      .get(`/api/reviews?sort_by=${sort_by}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeSortedBy(`${sort_by}`, {
+          descending: true,
+        });
+      });
+  });
+  //
+  it("200: should respond with the reviews sorted in asc order and the default should be desc", () => {
+    const order = "asc";
+    return request(app)
+      .get(`/api/reviews?order=${order}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeSortedBy(`created_at`, {
+          descending: false,
+        });
+      });
+  });
+});

@@ -1,15 +1,46 @@
 const db = require("../db/connection");
 
-exports.fetchReviews = () => {
+exports.fetchReviews = (category, sort_by = "created_at", order = "desc") => {
+  const validSortQuery = [
+    "title",
+    "designer",
+    "owner",
+    "review_img_url",
+    "category",
+    "created_at",
+    "votes",
+    "review_id",
+    "comment_count",
+  ];
+  const validOrderQuery = ["asc", "desc"];
+
+  const queryParams = [];
   let queryStr = `
     SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category,
     reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
     FROM reviews
     LEFT JOIN comments ON reviews.review_id = comments.review_id
-    GROUP BY reviews.review_id
-    ORDER BY reviews.created_at DESC;
     `;
-  return db.query(queryStr).then((result) => {
+
+  if (category) {
+    queryStr += ` WHERE category = $1`;
+    queryParams.push(category);
+  }
+  queryStr += ` GROUP BY reviews.review_id ORDER BY `;
+
+  if (validSortQuery.includes(sort_by)) {
+    queryStr += `${sort_by}`;
+  } else {
+    return Promise.reject("invalid query");
+  }
+
+  if (validOrderQuery.includes(order)) {
+    queryStr += ` ${order}`;
+  } else {
+    return Promise.reject("invalid query");
+  }
+
+  return db.query(queryStr, queryParams).then((result) => {
     return result.rows;
   });
 };
