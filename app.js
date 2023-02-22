@@ -11,7 +11,7 @@ const {
 const {
   error500Status,
   customErrors,
-  errorPSQL400,
+  errorPSQL,
   error404NoPath,
 } = require("./controllers/error-controllers");
 
@@ -22,7 +22,7 @@ app.get("/api/reviews/:review_id/comments", getReviewComments);
 app.post("/api/reviews/:review_id/comments", postReviewComments);
 
 app.use(error404NoPath);
-app.use(errorPSQL400);
+app.use(errorPSQL);
 app.use(customErrors);
 app.use(error500Status);
 

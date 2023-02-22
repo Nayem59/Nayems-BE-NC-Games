@@ -173,8 +173,8 @@ describe("POST /api/reviews/:review_id/commnets", () => {
       .expect(201)
       .then(({ body }) => {
         const { comment } = body;
-        expect(comment).toHaveProperty("comment_id", 7);
-        expect(comment).toHaveProperty("votes", expect.any(Number));
+        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+        expect(comment).toHaveProperty("votes", 0);
         expect(comment).toHaveProperty("created_at", expect.any(String));
         expect(comment).toHaveProperty("author", "mallionaire");
         expect(comment).toHaveProperty("body", "what an awesome comment");
@@ -197,7 +197,7 @@ describe("POST /api/reviews/:review_id/commnets", () => {
       });
   });
   //
-  it("400: should respond with 400 if new comment has not got right keys", () => {
+  it("400: should respond with 400 if new comment has got missing body key", () => {
     const review_id = "1";
     const newComment = {
       username: "mallionaire",
@@ -207,11 +207,11 @@ describe("POST /api/reviews/:review_id/commnets", () => {
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("missing request keys");
+        expect(body.msg).toBe("missing or wrong request keys");
       });
   });
   //
-  it("404: should respond with 404 not existent review_id", () => {
+  it("404: should respond with 404 not found review_id", () => {
     const review_id = "100";
     const newComment = {
       username: "mallionaire",
@@ -222,11 +222,11 @@ describe("POST /api/reviews/:review_id/commnets", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("valid but not existent review_id");
+        expect(body.msg).toBe("not found");
       });
   });
   //
-  it("404: should respond with 404 if user does not exist", () => {
+  it("404: should respond with 404 not found if user does not exist", () => {
     const review_id = "1";
     const newComment = {
       username: "wrongUser",
@@ -237,7 +237,7 @@ describe("POST /api/reviews/:review_id/commnets", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("user does not exist");
+        expect(body.msg).toBe("not found");
       });
   });
 });
