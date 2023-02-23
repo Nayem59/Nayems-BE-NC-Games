@@ -3,7 +3,7 @@ const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data/index");
 const app = require("../app");
-const { expect } = require("@jest/globals");
+const jasonEndpoints = require("../endpoints.json");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -461,6 +461,18 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("comment not existent");
+      });
+  });
+});
+//
+describe("GET /api", () => {
+  it("200: should respond with 200 and a JSON describing of all the available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { apiEndpoints } = body;
+        expect(apiEndpoints).toEqual(jasonEndpoints);
       });
   });
 });
