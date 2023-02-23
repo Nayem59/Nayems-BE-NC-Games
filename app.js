@@ -9,6 +9,7 @@ const {
   postReviewComments,
   patchReview,
 } = require("./controllers/reviews-controllers");
+const { getUsers } = require("./controllers/users-controllers");
 const {
   error500Status,
   customErrors,
@@ -22,6 +23,7 @@ app.get("/api/reviews/:review_id", getReviewById);
 app.get("/api/reviews/:review_id/comments", getReviewComments);
 app.post("/api/reviews/:review_id/comments", postReviewComments);
 app.patch("/api/reviews/:review_id", patchReview);
+app.get("/api/users", getUsers);
 
 app.use(error404NoPath);
 app.use(errorPSQL);
