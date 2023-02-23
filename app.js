@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+const { getApi } = require("./controllers/api-controllers");
 const { getCategories } = require("./controllers/categories-controllers");
 const {
   getReviews,
@@ -19,6 +20,7 @@ const {
   error404NoPath,
 } = require("./controllers/error-controllers");
 
+app.get("/api", getApi);
 app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewById);
