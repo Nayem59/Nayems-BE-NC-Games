@@ -435,3 +435,18 @@ describe("GET /api/reviews(queries)", () => {
       });
   });
 });
+//
+describe("DELETE /api/comments/:comment_id", () => {
+  it("204: should respond with 204 no content and delete the given comment by comment_id", () => {
+    return request(app)
+      .delete(`/api/comments/1`)
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  //
+  // it("400: should respond with 400 no content and delete the given comment by comment_id", () => {
+
+  // })
+});
