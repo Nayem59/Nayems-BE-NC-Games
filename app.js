@@ -7,6 +7,7 @@ const {
   getReviewById,
   getReviewComments,
   postReviewComments,
+  patchReview,
 } = require("./controllers/reviews-controllers");
 const {
   error500Status,
@@ -20,6 +21,7 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewById);
 app.get("/api/reviews/:review_id/comments", getReviewComments);
 app.post("/api/reviews/:review_id/comments", postReviewComments);
+app.patch("/api/reviews/:review_id", patchReview);
 
 app.use(error404NoPath);
 app.use(errorPSQL);
