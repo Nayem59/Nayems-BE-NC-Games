@@ -41,20 +41,26 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "desc") => {
   }
 
   return db.query(queryStr, queryParams).then((result) => {
-    // console.log(result.rows);
     return result.rows;
   });
 };
 
 exports.fetchReviewById = (review_id) => {
-  let queryStr = "SELECT * FROM reviews WHERE review_id = $1";
+  let queryStr = `
+    SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category,
+    reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, reviews.review_body,
+    COUNT(comments.review_id) AS comment_count
+    FROM reviews
+    LEFT JOIN comments ON reviews.review_id = comments.review_id
+    WHERE reviews.review_id = $1
+    GROUP BY reviews.review_id
+  `;
   const queryParams = [review_id];
 
   return db.query(queryStr, queryParams).then((result) => {
     if (result.rowCount === 0) {
       return Promise.reject("valid but not existent review_id");
     } else {
-      // console.log(result.rows[0]);
       return result.rows[0];
     }
   });

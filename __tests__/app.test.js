@@ -68,7 +68,7 @@ describe("GET /api/reviews", () => {
 });
 //
 describe("GET /api/reviews/:review_id", () => {
-  it("200: should respond with review object, which should have 9 properties", () => {
+  it("200: should respond with review object, which should have 10 properties", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
@@ -86,6 +86,7 @@ describe("GET /api/reviews/:review_id", () => {
         expect(review).toHaveProperty("category", expect.any(String));
         expect(review).toHaveProperty("owner", expect.any(String));
         expect(review).toHaveProperty("created_at", expect.any(String));
+        expect(review).toHaveProperty("comment_count", expect.any(String));
       });
   });
   //
@@ -108,7 +109,7 @@ describe("GET /api/reviews/:review_id", () => {
   });
 });
 //
-describe("GET /api/reviews/:review_id/commnets", () => {
+describe("GET /api/reviews/:review_id/comments", () => {
   it("200: should respond comments array for the given review_id, which should have 6 properties each", () => {
     return request(app)
       .get("/api/reviews/2/comments")
@@ -160,7 +161,7 @@ describe("GET /api/reviews/:review_id/commnets", () => {
   });
 });
 //
-describe("POST /api/reviews/:review_id/commnets", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
   it("201: should accept object with username and body and respond with posted comment", () => {
     const review_id = 1;
     const newComment = {
