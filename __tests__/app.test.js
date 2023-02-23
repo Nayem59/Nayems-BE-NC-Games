@@ -243,7 +243,7 @@ describe("POST /api/reviews/:review_id/commnets", () => {
 });
 //
 describe("PATCH /api/reviews/:review_id", () => {
-  it("201: should accept object with inc_votes and update with new vote in review", () => {
+  it("200: should accept object with inc_votes and update with new vote in review", () => {
     const review_id = 1;
     const newComment = {
       inc_votes: 1,
@@ -251,7 +251,7 @@ describe("PATCH /api/reviews/:review_id", () => {
     return request(app)
       .patch(`/api/reviews/${review_id}`)
       .send(newComment)
-      .expect(201)
+      .expect(200)
       .then(({ body }) => {
         const { review } = body;
         expect(review).toHaveProperty("review_id", review_id);
