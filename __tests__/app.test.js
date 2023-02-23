@@ -68,7 +68,7 @@ describe("GET /api/reviews", () => {
 });
 //
 describe("GET /api/reviews/:review_id", () => {
-  it("200: should respond with review object, which should have 9 properties", () => {
+  it("200: should respond with review object, which should have 10 properties", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
@@ -86,6 +86,7 @@ describe("GET /api/reviews/:review_id", () => {
         expect(review).toHaveProperty("category", expect.any(String));
         expect(review).toHaveProperty("owner", expect.any(String));
         expect(review).toHaveProperty("created_at", expect.any(String));
+        expect(review).toHaveProperty("comment_count", expect.any(String));
       });
   });
   //
@@ -108,7 +109,7 @@ describe("GET /api/reviews/:review_id", () => {
   });
 });
 //
-describe("GET /api/reviews/:review_id/commnets", () => {
+describe("GET /api/reviews/:review_id/comments", () => {
   it("200: should respond comments array for the given review_id, which should have 6 properties each", () => {
     return request(app)
       .get("/api/reviews/2/comments")
@@ -160,7 +161,7 @@ describe("GET /api/reviews/:review_id/commnets", () => {
   });
 });
 //
-describe("POST /api/reviews/:review_id/commnets", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
   it("201: should accept object with username and body and respond with posted comment", () => {
     const review_id = 1;
     const newComment = {
@@ -319,6 +320,118 @@ describe("PATCH /api/reviews/:review_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("valid but not existent review_id");
+      });
+  });
+});
+//
+describe("GET /api/users", () => {
+  it("200: should respond with users objects array, which should have username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        const { users } = body;
+        expect(body).toHaveProperty("users");
+        expect(body.users).toBeInstanceOf(Array);
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(user).toHaveProperty("username", expect.any(String));
+          expect(user).toHaveProperty("name", expect.any(String));
+          expect(user).toHaveProperty("avatar_url", expect.any(String));
+        });
+      });
+  });
+});
+//
+describe("GET /api/reviews(queries)", () => {
+  it("200: should respond with the reviews by the category value specified in the query", () => {
+    const category = "euro game";
+    return request(app)
+      .get(`/api/reviews?category=${category}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        const { reviews } = body;
+        reviews.forEach((review) => {
+          expect(review).toHaveProperty("category", category);
+        });
+      });
+  });
+  //
+  it("200: should respond with the reviews sorted by the value specified in the query default to date", () => {
+    const sort_by = "votes";
+    return request(app)
+      .get(`/api/reviews?sort_by=${sort_by}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeSortedBy(`${sort_by}`, {
+          descending: true,
+        });
+      });
+  });
+  //
+  it("200: should respond with the reviews sorted in asc order and the default should be desc", () => {
+    const order = "asc";
+    return request(app)
+      .get(`/api/reviews?order=${order}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeSortedBy(`created_at`, {
+          descending: false,
+        });
+      });
+  });
+  //
+  it("200: should respond with the reviews by category, sorted by value and in order", () => {
+    const category = "social deduction";
+    const sort_by = "votes";
+    const order = "asc";
+    return request(app)
+      .get(
+        `/api/reviews?category=${category}&sort_by=${sort_by}&order=${order}`
+      )
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        reviews.forEach((review) => {
+          expect(review).toHaveProperty("category", category);
+        });
+        expect(reviews).toBeSortedBy(`${sort_by}`, {
+          descending: false,
+        });
+      });
+  });
+  //
+  it("400: should respond with 400 if sort by is non existent", () => {
+    const sort_by = "banana";
+    return request(app)
+      .get(`/api/reviews?sort_by=${sort_by}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query");
+      });
+  });
+  //
+  it("400: should respond with 400 if order is not asc or desc", () => {
+    const order = "notAscOrDesc";
+    return request(app)
+      .get(`/api/reviews?order=${order}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query");
+      });
+  });
+  //
+  it("404: should respond with 404 if category non existent", () => {
+    const category = "banana";
+    return request(app)
+      .get(`/api/reviews?category=${category}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("category does not exist");
       });
   });
 });

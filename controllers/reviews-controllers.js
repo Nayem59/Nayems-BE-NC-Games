@@ -5,11 +5,22 @@ const {
   addReviewComments,
   updateReview,
 } = require("../models/reviews-models");
-const { fetchUserById } = require("../models/users-models");
+const { fetchCategory } = require("../models/categories-models");
 
 exports.getReviews = (req, res, next) => {
-  fetchReviews()
-    .then((reviews) => {
+  const { category, sort_by, order } = req.query;
+  const promises = [];
+
+  const fetchReviewsPromise = fetchReviews(category, sort_by, order);
+  promises.push(fetchReviewsPromise);
+
+  if (category) {
+    const checkCategoryPromise = fetchCategory(category);
+    promises.push(checkCategoryPromise);
+  }
+
+  return Promise.all(promises)
+    .then(([reviews]) => {
       res.status(200).send({ reviews });
     })
     .catch((err) => {
