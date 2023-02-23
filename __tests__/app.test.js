@@ -435,3 +435,32 @@ describe("GET /api/reviews(queries)", () => {
       });
   });
 });
+//
+describe("DELETE /api/comments/:comment_id", () => {
+  it("204: should respond with 204 no content and delete the given comment by comment_id", () => {
+    return request(app)
+      .delete(`/api/comments/1`)
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  //
+  it("400: should respond with 400 if comment if is not a number", () => {
+    return request(app)
+      .delete(`/api/comments/banana`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("404: should respond with 404 if comment_id does not exist", () => {
+    return request(app)
+      .delete(`/api/comments/100`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment not existent");
+      });
+  });
+});

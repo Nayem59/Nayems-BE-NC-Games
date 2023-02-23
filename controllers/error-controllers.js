@@ -7,6 +7,8 @@ exports.customErrors = (err, req, res, next) => {
     res.status(404).send({ msg: err });
   } else if (err === "invalid query") {
     res.status(400).send({ msg: err });
+  } else if (err === "comment not existent") {
+    res.status(404).send({ msg: err });
   } else if (err === "category does not exist") {
     res.status(404).send({ msg: err });
   } else {
