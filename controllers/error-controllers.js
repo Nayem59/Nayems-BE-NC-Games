@@ -5,8 +5,10 @@ exports.error404NoPath = (req, res, next) => {
 exports.customErrors = (err, req, res, next) => {
   if (err === "valid but not existent review_id") {
     res.status(404).send({ msg: err });
-  } else if (err === "user does not exist") {
-    res.status(404).send({ msg: "user does not exist" });
+  } else if (err === "invalid query") {
+    res.status(400).send({ msg: err });
+  } else if (err === "category does not exist") {
+    res.status(404).send({ msg: err });
   } else {
     next(err);
   }
