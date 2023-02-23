@@ -41,6 +41,7 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "desc") => {
   }
 
   return db.query(queryStr, queryParams).then((result) => {
+    // console.log(result.rows);
     return result.rows;
   });
 };
@@ -53,6 +54,7 @@ exports.fetchReviewById = (review_id) => {
     if (result.rowCount === 0) {
       return Promise.reject("valid but not existent review_id");
     } else {
+      // console.log(result.rows[0]);
       return result.rows[0];
     }
   });
