@@ -8,7 +8,7 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.fetchUserById = (username) => {
+exports.fetchUserByName = (username) => {
   let queryStr = "SELECT * FROM users WHERE username = $1";
   const queryParams = [username];
 

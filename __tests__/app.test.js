@@ -476,3 +476,28 @@ describe("GET /api", () => {
       });
   });
 });
+//
+describe("GET /api/users/:username", () => {
+  it("200: should respond with a single user object, which should have username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        expect(body).toHaveProperty("user");
+        const { user } = body;
+        expect(user).toHaveProperty("username", "mallionaire");
+        expect(user).toHaveProperty("name", "haz");
+        expect(user).toHaveProperty("avatar_url", expect.any(String));
+      });
+  });
+  //
+  it("404: should respond with 404 if username does not exist", () => {
+    return request(app)
+      .get("/api/users/nayem")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("user does not exist");
+      });
+  });
+});
