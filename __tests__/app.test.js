@@ -594,7 +594,7 @@ describe("POST /api/reviews", () => {
       review_body: "Very Fun game!",
       designer: "Nayem",
       category: "euro game",
-      // review_img_url: "myOwnUrl",
+      review_img_url: "myOwnUrl",
     };
     return request(app)
       .post(`/api/reviews`)
