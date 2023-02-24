@@ -594,7 +594,7 @@ describe("POST /api/reviews", () => {
       review_body: "Very Fun game!",
       designer: "Nayem",
       category: "euro game",
-      review_img_url: "myOwnUrl",
+      // review_img_url: "myOwnUrl",
     };
     return request(app)
       .post(`/api/reviews`)
@@ -608,7 +608,7 @@ describe("POST /api/reviews", () => {
         expect(review).toHaveProperty("review_body", "Very Fun game!");
         expect(review).toHaveProperty("designer", "Nayem");
         expect(review).toHaveProperty("category", "euro game");
-        expect(review).toHaveProperty("review_img_url", "myOwnUrl");
+        expect(review).toHaveProperty("review_img_url", expect.any(String)); // "myOwnUrl"
         expect(review).toHaveProperty("votes", 0);
         expect(review).toHaveProperty("created_at", expect.any(String));
         expect(review).toHaveProperty("comment_count", expect.any(String));

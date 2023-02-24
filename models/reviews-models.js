@@ -104,18 +104,19 @@ exports.updateReview = (review_id, newComment) => {
 };
 
 exports.addReview = (newReview) => {
+  // newReview.review_img_url = newReview.review_img_url ? newReview.review_img_url : null;
   const queryParams = [
     newReview.owner,
     newReview.title,
     newReview.review_body,
     newReview.designer,
     newReview.category,
-    newReview.review_img_url,
+    // newReview.review_img_url,
   ];
   let queryStr = `INSERT INTO reviews
-  (owner, title, review_body, designer, category, review_img_url)
+  (owner, title, review_body, designer, category)
   VALUES
-  ($1,$2,$3,$4,$5,$6)
+  ($1,$2,$3,$4,$5)
   RETURNING *;`;
 
   return db.query(queryStr, queryParams).then((result) => {
