@@ -12,7 +12,10 @@ const {
   patchReview,
 } = require("./controllers/reviews-controllers");
 const { getUsers, getUserByName } = require("./controllers/users-controllers");
-const { deleteCommentById } = require("./controllers/comments-controllers");
+const {
+  deleteCommentById,
+  patchCommentById,
+} = require("./controllers/comments-controllers");
 const {
   error500Status,
   customErrors,
@@ -30,6 +33,7 @@ app.patch("/api/reviews/:review_id", patchReview);
 app.get("/api/users", getUsers);
 app.delete("/api/comments/:comment_id", deleteCommentById);
 app.get("/api/users/:username", getUserByName);
+app.patch("/api/comments/:comment_id", patchCommentById);
 
 app.use(error404NoPath);
 app.use(errorPSQL);

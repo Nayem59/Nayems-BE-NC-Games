@@ -199,7 +199,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
   //
   it("400: should respond with 400 if new comment has got missing body key", () => {
-    const review_id = "1";
+    const review_id = 1;
     const newComment = {
       username: "mallionaire",
     };
@@ -213,7 +213,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
   //
   it("404: should respond with 404 not found review_id", () => {
-    const review_id = "100";
+    const review_id = 100;
     const newComment = {
       username: "mallionaire",
       body: "what an awesome comment",
@@ -228,7 +228,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
   //
   it("404: should respond with 404 not found if user does not exist", () => {
-    const review_id = "1";
+    const review_id = 1;
     const newComment = {
       username: "wrongUser",
       body: "what an awesome comment",
@@ -282,7 +282,7 @@ describe("PATCH /api/reviews/:review_id", () => {
   });
   //
   it("400: should respond with 400 if new comment has not got right keys", () => {
-    const review_id = "1";
+    const review_id = 1;
     const newComment = {
       wrongKey: 1,
     };
@@ -296,7 +296,7 @@ describe("PATCH /api/reviews/:review_id", () => {
   });
   //
   it("400: should respond with 400 bad request if new comment has not got right key value type", () => {
-    const review_id = "1";
+    const review_id = 1;
     const newComment = {
       inc_votes: "banana",
     };
@@ -310,7 +310,7 @@ describe("PATCH /api/reviews/:review_id", () => {
   });
   //
   it("404: should respond with 404 not existent review_id", () => {
-    const review_id = "100";
+    const review_id = 100;
     const newComment = {
       inc_votes: 1,
     };
@@ -499,5 +499,95 @@ describe("GET /api/users/:username", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("user does not exist");
       });
+  });
+});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+describe("PATCH /api/comments/:comment_id", () => {
+  it("200: should accept object with inc_votes and update with new vote in comment", () => {
+    const comment_id = 1;
+    const newVote = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch(`/api/comments/${comment_id}`)
+      .send(newVote)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toHaveProperty("comment_id", comment_id);
+        expect(comment).toHaveProperty("body", "I loved this game too!");
+        expect(comment).toHaveProperty("votes", 17);
+        expect(comment).toHaveProperty("author", "bainesface");
+        expect(comment).toHaveProperty("review_id", 2);
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+      });
+  });
+  //
+  it("400: should respond with 400 bad request if comment id is not a number", () => {
+    const comment_id = "banana";
+    const newVote = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch(`/api/comments/${comment_id}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("400: should respond with 400 if newVote has not got right keys", () => {
+    const comment_id = 1;
+    const newVote = {
+      wrongKey: 1,
+    };
+    return request(app)
+      .patch(`/api/comments/${comment_id}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing or wrong request keys");
+      });
+  });
+  //
+  it("400: should respond with 400 bad request if newVote has not got right key value type", () => {
+    const comment_id = 1;
+    const newVote = {
+      inc_votes: "banana",
+    };
+    return request(app)
+      .patch(`/api/reviews/${comment_id}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("404: should respond with 404 not existent comment_id", () => {
+    const comment_id = 100;
+    const newVote = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch(`/api/comments/${comment_id}`)
+      .send(newVote)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment not existent");
+      });
+      
   });
 });
