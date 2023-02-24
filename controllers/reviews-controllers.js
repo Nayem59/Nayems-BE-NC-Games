@@ -4,6 +4,7 @@ const {
   fetchReviewComments,
   addReviewComments,
   updateReview,
+  addReview,
 } = require("../models/reviews-models");
 const { fetchCategory } = require("../models/categories-models");
 
@@ -76,6 +77,18 @@ exports.patchReview = (req, res, next) => {
     })
     .then((review) => {
       res.status(200).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postReview = (req, res, next) => {
+  const newReview = req.body;
+
+  addReview(newReview)
+    .then((review) => {
+      res.status(201).send({ review });
     })
     .catch((err) => {
       next(err);

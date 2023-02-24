@@ -41,6 +41,7 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "desc") => {
   }
 
   return db.query(queryStr, queryParams).then((result) => {
+    // console.log(result.rows);
     return result.rows;
   });
 };
@@ -99,5 +100,38 @@ exports.updateReview = (review_id, newComment) => {
 
   return db.query(queryStr, queryParams).then((result) => {
     return result.rows[0];
+  });
+};
+
+exports.addReview = (newReview) => {
+  const queryParams = [
+    newReview.owner,
+    newReview.title,
+    newReview.review_body,
+    newReview.designer,
+    newReview.category,
+    newReview.review_img_url,
+  ];
+  let queryStr = `INSERT INTO reviews
+  (owner, title, review_body, designer, category, review_img_url)
+  VALUES
+  ($1,$2,$3,$4,$5,$6)
+  RETURNING *;`;
+
+  return db.query(queryStr, queryParams).then((result) => {
+    return db
+      .query(
+        `SELECT owner, title, review_body, designer, category, reviews.review_id, reviews.votes, reviews.created_at, review_img_url,
+        COUNT(reviews.review_id = comments.review_id) AS comment_count
+        FROM reviews
+        LEFT JOIN comments ON reviews.review_id = comments.review_id
+        WHERE reviews.review_id = $1
+        GROUP BY reviews.review_id`,
+        [result.rows[0].review_id]
+      )
+      .then((result) => {
+        console.log(result.rows[0]);
+        return result.rows[0];
+      });
   });
 };

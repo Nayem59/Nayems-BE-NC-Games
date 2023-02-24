@@ -10,6 +10,7 @@ const {
   getReviewComments,
   postReviewComments,
   patchReview,
+  postReview,
 } = require("./controllers/reviews-controllers");
 const { getUsers, getUserByName } = require("./controllers/users-controllers");
 const {
@@ -34,6 +35,7 @@ app.get("/api/users", getUsers);
 app.delete("/api/comments/:comment_id", deleteCommentById);
 app.get("/api/users/:username", getUserByName);
 app.patch("/api/comments/:comment_id", patchCommentById);
+app.post("/api/reviews", postReview);
 
 app.use(error404NoPath);
 app.use(errorPSQL);
