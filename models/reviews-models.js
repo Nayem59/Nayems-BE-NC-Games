@@ -1,6 +1,12 @@
 const db = require("../db/connection");
 
-exports.fetchReviews = (category, sort_by = "created_at", order = "desc") => {
+exports.fetchReviews = (
+  category,
+  sort_by = "created_at",
+  order = "desc",
+  limit = "10",
+  p = "0"
+) => {
   const validSortQuery = [
     "title",
     "designer",
@@ -40,9 +46,30 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "desc") => {
     return Promise.reject("invalid query");
   }
 
+  const regEx = /[^\0-9]/;
+  if (limit.match(regEx) || p.match(regEx)) {
+    return Promise.reject("invalid query");
+  } else {
+    queryStr += ` LIMIT ${limit} OFFSET ${p * limit};`;
+  }
+
   return db.query(queryStr, queryParams).then((result) => {
-    // console.log(result.rows);
+    console.log(result.rows);
     return result.rows;
+  });
+};
+
+exports.countReviews = (categories) => {
+  let queryStr = `SELECT COUNT(*) FROM reviews`;
+  const queryParam = [];
+
+  if (categories) {
+    queryStr += " WHERE category = $1";
+    queryParam.push(categories);
+  }
+
+  return db.query(queryStr, queryParam).then(({ rows }) => {
+    return +rows[0].count;
   });
 };
 
@@ -138,7 +165,6 @@ exports.addReview = (newReview) => {
         [result.rows[0].review_id]
       )
       .then((result) => {
-        console.log(result.rows[0]);
         return result.rows[0];
       });
   });

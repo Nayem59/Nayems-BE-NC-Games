@@ -5,14 +5,17 @@ const {
   addReviewComments,
   updateReview,
   addReview,
+  countReviews,
 } = require("../models/reviews-models");
 const { fetchCategory } = require("../models/categories-models");
 
 exports.getReviews = (req, res, next) => {
-  const { category, sort_by, order } = req.query;
+  const { category, sort_by, order, limit, p } = req.query;
   const promises = [];
 
-  const fetchReviewsPromise = fetchReviews(category, sort_by, order);
+  const countReviewsPromise = countReviews(category);
+  const fetchReviewsPromise = fetchReviews(category, sort_by, order, limit, p);
+  promises.push(countReviewsPromise);
   promises.push(fetchReviewsPromise);
 
   if (category) {
@@ -21,8 +24,8 @@ exports.getReviews = (req, res, next) => {
   }
 
   return Promise.all(promises)
-    .then(([reviews]) => {
-      res.status(200).send({ reviews });
+    .then(([total_count, reviews]) => {
+      res.status(200).send({ total_count, reviews });
     })
     .catch((err) => {
       next(err);

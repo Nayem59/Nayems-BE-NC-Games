@@ -700,3 +700,20 @@ describe("POST /api/reviews", () => {
   });
 });
 //
+describe("GET /api/reviews (pagination)", () => {
+  test.only("200: Should have a default limit of 10 results with a total_count key of all reviews", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        expect(body).toHaveProperty("reviews");
+        expect(body).toHaveProperty("total_count");
+        const { reviews } = body;
+        const { total_count } = body;
+        expect(body.reviews).toBeInstanceOf(Array);
+        expect(reviews.length).toBe(10);
+        expect(total_count).toBe(13);
+      });
+  });
+});
