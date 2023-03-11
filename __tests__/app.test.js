@@ -580,14 +580,8 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 //
-//
-//
-//
-//
-//
-//
 describe("POST /api/reviews", () => {
-  it("201: should accept object and respond with posted review", () => {
+  it("201: should accept object and respond with posted review ", () => {
     const newReview = {
       owner: "mallionaire",
       title: "New Review Title",
@@ -608,10 +602,101 @@ describe("POST /api/reviews", () => {
         expect(review).toHaveProperty("review_body", "Very Fun game!");
         expect(review).toHaveProperty("designer", "Nayem");
         expect(review).toHaveProperty("category", "euro game");
-        expect(review).toHaveProperty("review_img_url", expect.any(String)); // "myOwnUrl"
+        expect(review).toHaveProperty("review_img_url", "myOwnUrl");
         expect(review).toHaveProperty("votes", 0);
         expect(review).toHaveProperty("created_at", expect.any(String));
         expect(review).toHaveProperty("comment_count", expect.any(String));
       });
   });
+  //
+  it("201: should ignore additional keys", () => {
+    const newReview = {
+      owner: "mallionaire",
+      title: "New Review Title",
+      review_body: "Very Fun game!",
+      designer: "Nayem",
+      category: "euro game",
+      review_img_url: "myOwnUrl",
+      additionalKey: "ignore", // <------
+    };
+    return request(app)
+      .post(`/api/reviews`)
+      .send(newReview)
+      .expect(201)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toHaveProperty("review_id", 14);
+        expect(review).toHaveProperty("owner", "mallionaire");
+        expect(review).toHaveProperty("title", "New Review Title");
+        expect(review).toHaveProperty("review_body", "Very Fun game!");
+        expect(review).toHaveProperty("designer", "Nayem");
+        expect(review).toHaveProperty("category", "euro game");
+        expect(review).toHaveProperty("review_img_url", "myOwnUrl");
+        expect(review).toHaveProperty("votes", 0);
+        expect(review).toHaveProperty("created_at", expect.any(String));
+        expect(review).toHaveProperty("comment_count", expect.any(String));
+      });
+  });
+  //
+  it("201: should provide default url if not provided", () => {
+    const newReview = {
+      owner: "mallionaire",
+      title: "New Review Title",
+      review_body: "Very Fun game!",
+      designer: "Nayem",
+      category: "euro game",
+      // review_img_url: "myOwnUrl", <----- missing
+    };
+    return request(app)
+      .post(`/api/reviews`)
+      .send(newReview)
+      .expect(201)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toHaveProperty("review_id", 14);
+        expect(review).toHaveProperty("owner", "mallionaire");
+        expect(review).toHaveProperty("title", "New Review Title");
+        expect(review).toHaveProperty("review_body", "Very Fun game!");
+        expect(review).toHaveProperty("designer", "Nayem");
+        expect(review).toHaveProperty("category", "euro game");
+        expect(review).toHaveProperty("review_img_url", expect.any(String)); // <----- not "myOwnUrl"
+        expect(review).toHaveProperty("votes", 0);
+        expect(review).toHaveProperty("created_at", expect.any(String));
+        expect(review).toHaveProperty("comment_count", expect.any(String));
+      });
+  });
+  //
+  it("400: should respond with 400 if new comment has got missing body key", () => {
+    const newReview = {
+      owner: "mallionaire",
+      title: "New Review Title",
+      // missing relevant keys
+    };
+    return request(app)
+      .post(`/api/reviews`)
+      .send(newReview)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing or wrong request keys");
+      });
+  });
+  //
+  it("404: should respond with 404 not found if user does not exist", () => {
+    const newReview = {
+      owner: "Wrong User", // <----- use does not exist
+      title: "New Review Title",
+      review_body: "Very Fun game!",
+      designer: "Nayem",
+      category: "euro game",
+      review_img_url: "myOwnUrl",
+    };
+    return request(app)
+      .post(`/api/reviews`)
+      .send(newReview)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
 });
+//
