@@ -177,3 +177,15 @@ exports.addReview = (newReview) => {
       });
   });
 };
+
+exports.removeReviewById = (review_id) => {
+  let queryStr = "DELETE FROM reviews WHERE review_id = $1 RETURNING *";
+  const queryParams = [review_id];
+
+  return db.query(queryStr, queryParams).then((result) => {
+    if (result.rowCount === 0) {
+      return Promise.reject("review does not exist");
+    }
+    return result.rowCount;
+  });
+};

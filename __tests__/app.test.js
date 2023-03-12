@@ -856,3 +856,27 @@ describe("POST /api/categories", () => {
       });
   });
 });
+//
+describe("DELETE /api/reviews/:review_id", () => {
+  it("204: should respond with 204 and delete the review", () => {
+    return request(app).delete("/api/reviews/1").expect(204);
+  });
+  //
+  it("400: should respond with 400 if review id is not a number", () => {
+    return request(app)
+      .delete("/api/reviews/banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  //
+  it("404: should respond with 404 if review id does not exist", () => {
+    return request(app)
+      .delete("/api/reviews/500")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("review does not exist");
+      });
+  });
+});

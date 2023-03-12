@@ -6,6 +6,7 @@ const {
   updateReview,
   addReview,
   countReviews,
+  removeReviewById,
 } = require("../models/reviews-models");
 const { fetchCategory } = require("../models/categories-models");
 
@@ -93,6 +94,17 @@ exports.postReview = (req, res, next) => {
   addReview(newReview)
     .then((review) => {
       res.status(201).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteReviewById = (req, res, next) => {
+  const { review_id } = req.params;
+  removeReviewById(review_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);

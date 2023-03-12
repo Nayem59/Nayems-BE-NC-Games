@@ -11,6 +11,8 @@ exports.customErrors = (err, req, res, next) => {
     res.status(404).send({ msg: err });
   } else if (err === "user does not exist") {
     res.status(404).send({ msg: err });
+  } else if (err === "review does not exist") {
+    res.status(404).send({ msg: err });
   } else if (err === "category does not exist") {
     res.status(404).send({ msg: err });
   } else {
