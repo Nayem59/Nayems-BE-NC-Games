@@ -54,7 +54,7 @@ exports.fetchReviews = (
   }
 
   return db.query(queryStr, queryParams).then((result) => {
-    console.log(result.rows);
+    // console.log(result.rows);
     return result.rows;
   });
 };

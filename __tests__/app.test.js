@@ -48,7 +48,7 @@ describe("GET /api/reviews", () => {
         expect(body).toHaveProperty("reviews");
         const { reviews } = body;
         expect(body.reviews).toBeInstanceOf(Array);
-        expect(reviews.length).toBe(13);
+        // expect(reviews.length).toBe(13); <----- default to 10 now, because of pagination
         reviews.forEach((review) => {
           expect(review).toHaveProperty("owner", expect.any(String));
           expect(review).toHaveProperty("title", expect.any(String));
@@ -666,7 +666,7 @@ describe("POST /api/reviews", () => {
       });
   });
   //
-  it("400: should respond with 400 if new comment has got missing body key", () => {
+  it("400: should respond with 400 if new review has got missing body key", () => {
     const newReview = {
       owner: "mallionaire",
       title: "New Review Title",
@@ -701,7 +701,7 @@ describe("POST /api/reviews", () => {
 });
 //
 describe("GET /api/reviews (pagination)", () => {
-  test.only("200: Should have a default limit of 10 results with a total_count key of all reviews", () => {
+  it("200: Should have a default limit of 10 results with a total_count key of all reviews", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -714,6 +714,39 @@ describe("GET /api/reviews (pagination)", () => {
         expect(body.reviews).toBeInstanceOf(Array);
         expect(reviews.length).toBe(10);
         expect(total_count).toBe(13);
+      });
+  });
+  //
+  it("200: should accept a query limit and return the correct number of reviews", () => {
+    return request(app)
+      .get("/api/reviews?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        const { total_count } = body;
+        expect(reviews.length).toBe(5);
+        expect(total_count).toBe(13);
+      });
+  });
+  //
+  it("200: should return an empty array when page is too high", () => {
+    return request(app)
+      .get("/api/reviews?p=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        const { total_count } = body;
+        expect(reviews.length).toBe(0);
+        expect(total_count).toBe(13);
+      });
+  });
+  //
+  it.only("400: should respond with 400 when passed a limit or p that is not a number", () => {
+    return request(app)
+      .get("/api/reviews?limit=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query");
       });
   });
 });
