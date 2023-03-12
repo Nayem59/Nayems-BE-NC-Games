@@ -3,7 +3,10 @@ const app = express();
 app.use(express.json());
 
 const { getApi } = require("./controllers/api-controllers");
-const { getCategories } = require("./controllers/categories-controllers");
+const {
+  getCategories,
+  postCategory,
+} = require("./controllers/categories-controllers");
 const {
   getReviews,
   getReviewById,
@@ -36,6 +39,7 @@ app.delete("/api/comments/:comment_id", deleteCommentById);
 app.get("/api/users/:username", getUserByName);
 app.patch("/api/comments/:comment_id", patchCommentById);
 app.post("/api/reviews", postReview);
+app.post("/api/categories", postCategory);
 
 app.use(error404NoPath);
 app.use(errorPSQL);

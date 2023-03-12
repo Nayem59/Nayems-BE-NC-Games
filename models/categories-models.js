@@ -18,3 +18,20 @@ exports.fetchCategory = (category) => {
     }
   });
 };
+
+exports.addCategory = (newCategory) => {
+  const category = [newCategory.slug, newCategory.description];
+  return db
+    .query(
+      `INSERT INTO categories
+		(slug, description)
+		VALUES
+		($1, $2)
+		RETURNING *`,
+      category
+    )
+    .then(({ rows }) => {
+      // console.log(rows[0]);
+      return rows[0];
+    });
+};

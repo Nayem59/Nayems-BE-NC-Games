@@ -14,10 +14,21 @@
       ]
     }
   },
-  "GET /api/reviews": {
-    "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
+  "POST /api/categories": {
+    "description": "you can add a category by providing a request body with slug & description key & it serves a single category object",
+    "queries": [],
     "exampleResponse": {
+      "category": {
+        "slug": "newCategory",
+        "description": "awesome description"
+      }
+    }
+  },
+  "GET /api/reviews": {
+    "description": "serves an array of all reviews with total_count key, result is paginated (default to limit=10), please use the query limit & p to override",
+    "queries": ["category", "sort_by", "order", "limit", "p"],
+    "exampleResponse": {
+      "total_count": 24,
       "reviews": [
         {
           "title": "One Night Ultimate Werewolf",
@@ -48,8 +59,8 @@
     }
   },
   "GET /api/reviews/:review_id/comments": {
-    "description": "serves an array of all comments for the given review_id",
-    "queries": [],
+    "description": "serves an array of all comments for the given review_id, result is paginated (default to limit=10), please use the query limit & p to override",
+    "queries": ["limit", "p"],
     "exampleResponse": {
       "comments": [
         {

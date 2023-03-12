@@ -795,4 +795,64 @@ describe("GET /api/reviews/:review_id/comments (pagination)", () => {
   });
 });
 //
-
+describe("POST /api/categories", () => {
+  it("201: should take a request body with slug & description key(other keys ignored) & return the new category", () => {
+    const newCategory = {
+      slug: "newCategory",
+      description: "awesome description",
+    };
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect(201)
+      .then(({ body }) => {
+        const { category } = body;
+        expect(category).toHaveProperty("slug", "newCategory");
+        expect(category).toHaveProperty("description", "awesome description");
+      });
+  });
+  //
+  it("201: should return the new category if no description is provided", () => {
+    const newCategory = {
+      slug: "newCategory",
+      // description: "awesome description", <----- description not provided
+    };
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect(201)
+      .then(({ body }) => {
+        const { category } = body;
+        expect(category).toHaveProperty("slug", "newCategory");
+        expect(category).toHaveProperty("description", null);
+      });
+  });
+  //
+  it("400: should respond with 400 if category slug already exist", () => {
+    const newCategory = {
+      slug: "euro game", // <----- already exist
+      description: "awesome description",
+    };
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("slug already exists");
+      });
+  });
+  //
+  it("400: should respond with 400 if category slug is missing", () => {
+    const newCategory = {
+      // slug: "euro game", <----- missing
+      description: "awesome description",
+    };
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing or wrong request keys");
+      });
+  });
+});
