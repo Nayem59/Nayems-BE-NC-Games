@@ -94,12 +94,20 @@ exports.fetchReviewById = (review_id) => {
   });
 };
 
-exports.fetchReviewComments = (review_id) => {
+exports.fetchReviewComments = (review_id, limit = "10", p = "0") => {
   let queryStr =
     "SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC";
   const queryParams = [review_id];
 
+  const regEx = /[^\0-9]/;
+  if (limit.match(regEx) || p.match(regEx)) {
+    return Promise.reject("invalid query");
+  } else {
+    queryStr += ` LIMIT ${limit} OFFSET ${p * limit};`;
+  }
+
   return db.query(queryStr, queryParams).then((result) => {
+    // console.log(result.rows);
     return result.rows;
   });
 };

@@ -45,8 +45,9 @@ exports.getReviewById = (req, res, next) => {
 
 exports.getReviewComments = (req, res, next) => {
   const { review_id } = req.params;
+  const { limit, p } = req.query;
   const checkReviewPromise = fetchReviewById(review_id);
-  const fetchReviewCommentsPromise = fetchReviewComments(review_id);
+  const fetchReviewCommentsPromise = fetchReviewComments(review_id, limit, p);
 
   return Promise.all([fetchReviewCommentsPromise, checkReviewPromise])
     .then(([comments]) => {

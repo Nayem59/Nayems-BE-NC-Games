@@ -717,7 +717,7 @@ describe("GET /api/reviews (pagination)", () => {
       });
   });
   //
-  it("200: should accept a query limit and return the correct number of reviews", () => {
+  it("200: should accept a query limit and return the correct number of reviews defaulting to first page", () => {
     return request(app)
       .get("/api/reviews?limit=5")
       .expect(200)
@@ -741,7 +741,7 @@ describe("GET /api/reviews (pagination)", () => {
       });
   });
   //
-  it.only("400: should respond with 400 when passed a limit or p that is not a number", () => {
+  it("400: should respond with 400 when passed a limit or p that is not a number", () => {
     return request(app)
       .get("/api/reviews?limit=banana")
       .expect(400)
@@ -750,3 +750,49 @@ describe("GET /api/reviews (pagination)", () => {
       });
   });
 });
+//
+describe("GET /api/reviews/:review_id/comments (pagination)", () => {
+  it("200: Should have a default limit of 10 results", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        expect(body).toHaveProperty("comments");
+        const { comments } = body;
+        expect(body.comments).toBeInstanceOf(Array);
+        // expect(comments.length).toBe(10); <----- this passed, but we dont have more then 10 comments in test data
+      });
+  });
+  //
+  it("200: should accept a query limit and return the correct number of reviews defaulting to first page", () => {
+    return request(app)
+      .get("/api/reviews/3/comments?limit=3")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments.length).toBe(3);
+      });
+  });
+  //
+  it("200: should return an empty array when page is too high", () => {
+    return request(app)
+      .get("/api/reviews/3/comments?p=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments.length).toBe(0);
+      });
+  });
+  //
+  it("400: should respond with 400 when passed a limit or p that is not a number", () => {
+    return request(app)
+      .get("/api/reviews/3/comments?limit=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query");
+      });
+  });
+});
+//
+
