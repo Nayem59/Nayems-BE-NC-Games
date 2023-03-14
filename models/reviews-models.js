@@ -5,7 +5,7 @@ exports.fetchReviews = (
   sort_by = "created_at",
   order = "desc",
   limit = "10",
-  p = "0"
+  p = "1"
 ) => {
   const validSortQuery = [
     "title",
@@ -50,7 +50,7 @@ exports.fetchReviews = (
   if (limit.match(regEx) || p.match(regEx)) {
     return Promise.reject("invalid query");
   } else {
-    queryStr += ` LIMIT ${limit} OFFSET ${p * limit};`;
+    queryStr += ` LIMIT ${limit} OFFSET ${(p - 1) * limit};`;
   }
 
   return db.query(queryStr, queryParams).then((result) => {
@@ -94,7 +94,7 @@ exports.fetchReviewById = (review_id) => {
   });
 };
 
-exports.fetchReviewComments = (review_id, limit = "10", p = "0") => {
+exports.fetchReviewComments = (review_id, limit = "10", p = "1") => {
   let queryStr =
     "SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC";
   const queryParams = [review_id];
@@ -103,7 +103,7 @@ exports.fetchReviewComments = (review_id, limit = "10", p = "0") => {
   if (limit.match(regEx) || p.match(regEx)) {
     return Promise.reject("invalid query");
   } else {
-    queryStr += ` LIMIT ${limit} OFFSET ${p * limit};`;
+    queryStr += ` LIMIT ${limit} OFFSET ${(p - 1) * limit};`;
   }
 
   return db.query(queryStr, queryParams).then((result) => {
